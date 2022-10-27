@@ -62,7 +62,7 @@ function leave_one_out_kNN(dataset::DataFrame, data_cols::UnitRange{Int64},
         tmp_d::DataFrame = deepcopy(dataset)
         leaved::DataFrame = DataFrame(tmp_d[i, :])
         deleteat!(tmp_d, i)
-        classifier = kNN(k, p, tmp_d[:, data_cols], DataFrame(class=tmp_d[:, label_col]))
+        classifier = kNN_classifier(k, p, tmp_d[:, data_cols], DataFrame(class=tmp_d[:, label_col]))
         append!(results, [classifier.classify(leaved[1, data_cols]) == leaved[1, label_col]])
     end
     mean(results)
