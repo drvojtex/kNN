@@ -5,13 +5,13 @@ using FreqTables
 using StatsBase
 
 
-Base.@kwdef struct kNN
+Base.@kwdef mutable struct kNN_classifier
     k::Int64
     p::Float64
     data::DataFrame
     labels::DataFrame
     classify::Function
-    kNN(k, p, data, labels) = new(k, p, data, labels, 
+    kNN_classifier(k, p, data, labels) = new(k, p, data, labels, 
         (x::DataFrameRow) -> begin
             ftd = Dict(
                 freqtable(labels[map(
