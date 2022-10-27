@@ -72,16 +72,16 @@ leave_one_out_kNN(dataset::DataFrame, data_cols::UnitRange{Int64},
     label_col::Int64, k::Int64, p::Int64) = leave_one_out(dataset, data_cols, label_col, k, Float64(p))
 
 """
-    contingence_table(f, x, y)
+    contingency_table(f, x, y)
 
-Get contingence table of the kNN classifier.
+Get contingency table of the kNN classifier.
 
 f<:Function - kNN classifier.classify function.
 x::DataFrame - input data.
 y::DataFrame - labels.
 
 """
-function contingence_table(f::T, x::DataFrame, y::DataFrame) where T<:Function 
+function contingency_table(f::T, x::DataFrame, y::DataFrame) where T<:Function 
     labels_mapping::Dict{String, Int64} = Dict(String.(unique(y.class)) .=> 1:length(unique(y.class)))
     contab::Matrix{Float64} = zeros(length(labels_mapping), length(labels_mapping))
     ŷ::Vector{String} = String.(dataframe_classify(f, x).class)
