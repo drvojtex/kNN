@@ -43,29 +43,39 @@ y::DataFrame - labels.
 
 Example of usage:
 ```
-> dataset = DataFrame(shuffle(eachrow(Iris().dataframe)))
+> dataset = DataFrame(shuffle(eachrow(Iris().dataframe)));
 
-> trn_data = dataset[1:120, :]
-> test_data = dataset[121:end, :]
+> trn_data = dataset[1:120, :];
+> test_data = dataset[121:end, :];
 
 > classifier = kNN(3, 2.0, trn_data[:,1:4], DataFrame(class=trn_data[:,5]));
-> acc(classifier.classify, test_data[:,1:4], DataFrame(class=test_data[:,5]));
+> acc(classifier.classify, test_data[:,1:4], DataFrame(class=test_data[:,5]))
 ```
 """
 function acc(f::T, x::DataFrame, y::DataFrame) where T<:Function 
     mean(Int.(dataframe_classify(f, x) .== y).class)
 end
 
-function leave_one_out(dataset::DataFrame, k::Int64, p::Float64)
+"""
+    leave_one_out_kNN(dataset, data_cols, label_cols, k, p)
+
+Get accuracy of the kNN classifier by the leave-one-out method.
+
+dataset::DataFrame - frame of the dataset.
+data_cols::UnitRange{Int64} - input data columns range.
+labels_cols::Int64 - labels column index.
+"""
+function leave_one_out_kNN(dataset::DataFrame, data_cols::UnitRange{Int64}, 
+        label_cols::Int64, k::Int64, p::Float64)
     results::Vector{Bool} = []
     for i::Int64=1:size(dataset)[1]
         tmp_d::DataFrame = deepcopy(dataset)
         leaved::DataFrame = DataFrame(tmp_d[i, :])
         deleteat!(tmp_d, i)
-        classifier = kNN(k, p, tmp_d[:,1:4], DataFrame(class=tmp_d[:,5]))
-        append!(results, [classifier.classify(leaved[1, 1:4]) == leaved[1,5]])
+        classifier = kNN(k, p, tmp_d[:, data_cols], DataFrame(class=tmp_d[:, label_cols]))
+        append!(results, [classifier.classify(leaved[1, data_cols]) == leaved[1, label_cols]])
     end
     mean(results)
 end
 
-leave_one_out(dataset::DataFrame, k::Int64, p::Int64) = leave_one_out(dataset,k, Float64(p))
+leave_one_out(dataset::DataFrame, k::Int64, p::Int64) = leave_one_out(dataset, k, Float64(p))
