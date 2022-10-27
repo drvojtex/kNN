@@ -68,7 +68,7 @@ function leave_one_out_kNN(dataset::DataFrame, data_cols::UnitRange{Int64},
     mean(results)
 end
 
-leave_one_out(dataset::DataFrame, data_cols::UnitRange{Int64}, 
+leave_one_out_kNN(dataset::DataFrame, data_cols::UnitRange{Int64}, 
     label_col::Int64, k::Int64, p::Int64) = leave_one_out(dataset, data_cols, label_col, k, Float64(p))
 
 """
