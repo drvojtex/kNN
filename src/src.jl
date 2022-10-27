@@ -88,5 +88,5 @@ function contingence_table(f::T, x::DataFrame, y::DataFrame) where T<:Function
     map(xy -> contab[
             labels_mapping[xy[1]], labels_mapping[xy[2]]
         ] += 1, zip(ŷ, String.(y.class)))
-    return contab
+    return contab, labels_mapping
 end
