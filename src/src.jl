@@ -56,19 +56,20 @@ data_cols::UnitRange{Int64} - input data columns range.
 labels_cols::Int64 - labels column index.
 """
 function leave_one_out_kNN(dataset::DataFrame, data_cols::UnitRange{Int64}, 
-        label_cols::Int64, k::Int64, p::Float64)
+        label_col::Int64, k::Int64, p::Float64)
     results::Vector{Bool} = []
     for i::Int64=1:size(dataset)[1]
         tmp_d::DataFrame = deepcopy(dataset)
         leaved::DataFrame = DataFrame(tmp_d[i, :])
         deleteat!(tmp_d, i)
-        classifier = kNN(k, p, tmp_d[:, data_cols], DataFrame(class=tmp_d[:, label_cols]))
-        append!(results, [classifier.classify(leaved[1, data_cols]) == leaved[1, label_cols]])
+        classifier = kNN(k, p, tmp_d[:, data_cols], DataFrame(class=tmp_d[:, label_col]))
+        append!(results, [classifier.classify(leaved[1, data_cols]) == leaved[1, label_col]])
     end
     mean(results)
 end
 
-leave_one_out(dataset::DataFrame, k::Int64, p::Int64) = leave_one_out(dataset, k, Float64(p))
+leave_one_out(dataset::DataFrame, data_cols::UnitRange{Int64}, 
+    label_col::Int64, k::Int64, p::Int64) = leave_one_out(dataset, data_cols, label_col, k, Float64(p))
 
 """
     contingence_table(f, x, y)
