@@ -41,16 +41,6 @@ f<:Function - kNN classifier.classify function.
 x::DataFrame - input data.
 y::DataFrame - labels.
 
-Example of usage:
-```
-> dataset = DataFrame(shuffle(eachrow(Iris().dataframe)));
-
-> trn_data = dataset[1:120, :];
-> test_data = dataset[121:end, :];
-
-> classifier = kNN(3, 2.0, trn_data[:,1:4], DataFrame(class=trn_data[:,5]));
-> acc(classifier.classify, test_data[:,1:4], DataFrame(class=test_data[:,5]))
-```
 """
 function acc(f::T, x::DataFrame, y::DataFrame) where T<:Function 
     mean(Int.(dataframe_classify(f, x) .== y).class)
@@ -79,3 +69,21 @@ function leave_one_out_kNN(dataset::DataFrame, data_cols::UnitRange{Int64},
 end
 
 leave_one_out(dataset::DataFrame, k::Int64, p::Int64) = leave_one_out(dataset, k, Float64(p))
+
+"""
+    contingence_table(f, x, y)
+
+Get contingence table of the kNN classifier.
+
+f<:Function - kNN classifier.classify function.
+x::DataFrame - input data.
+y::DataFrame - labels.
+
+"""
+function contingence_table(f::T, x::DataFrame, y::DataFrame) where T<:Function 
+    labels_mapping::DataFrame = unique(y).class .=> 1:length(unique(y))
+    contab::Matrix{Float64} = zeros(length(labels_mapping))
+    ŷ::Vector{String} = dataframe_classify(f, x)
+    map(xy -> contab[xy[1], xy[2]]+=1, zip(ŷ, y.class))
+    return contab
+end
