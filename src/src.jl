@@ -81,9 +81,9 @@ y::DataFrame - labels.
 
 """
 function contingence_table(f::T, x::DataFrame, y::DataFrame) where T<:Function 
-    labels_mapping::DataFrame = unique(y.class) .=> 1:length(unique(y.class))
+    labels_mapping::DataFrame = String.(unique(y.class)) .=> 1:length(unique(y.class))
     contab::Matrix{Float64} = zeros(length(labels_mapping))
     ŷ::Vector{String} = dataframe_classify(f, x)
-    map(xy -> contab[xy[1], xy[2]]+=1, zip(ŷ, y.class))
+    map(xy -> contab[xy[1], xy[2]]+=1, zip(ŷ, String.(y.class)))
     return contab
 end
